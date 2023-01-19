@@ -1,14 +1,32 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+mod manager;
+
+use async_trait::async_trait;
+use sqlx::postgres::PgPool;
+
+pub type ReservationId = String;
+pub type UserId = String;
+pub type ResourceId = String;
+
+#[derive(Debug)]
+pub struct ReservetionManager{
+
+    pool:PgPool,
+
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+#[async_trait]
+pub trait Rsvp {
+    async fn reserve(&self, rsvp: abi::Reservation) -> Result<abi::Reservation, abi::Error>;
+
+    async fn change_status(&self, id:ReservationId) -> Result<abi::Reservation, abi::Error>;
+
+    async fn update_note(&self, id:ReservationId, note: String) -> Result<abi::Reservation, abi::Error>;
+
+    async fn delete(&self, id:ReservationId) -> Result<(), abi::Error>;
+
+    async fn get(&self, id:ReservationId) -> Result<abi::Reservation, abi::Error>;
+
+    async fn query(&self, query: abi::ReservationQuery) -> Result<Vec<abi::Reservation>,  abi::Error>;
+
 }
